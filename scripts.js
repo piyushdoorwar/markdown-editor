@@ -1,8 +1,11 @@
 const editor = document.getElementById('editor');
 const preview = document.getElementById('preview');
+const lineNumbers = document.getElementById('line-numbers');
+const resizer = document.getElementById('resizer');
 
 let history = [];
 let historyIndex = -1;
+let isResizing = false;
 
 const initialMarkdown = `# Welcome to your markdown editor
 
@@ -32,6 +35,11 @@ const saveToHistory = () => {
 };
 
 saveToHistory();
+
+const updateLineNumbers = () => {
+  const lines = editor.value.split('\n').length;
+  lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
+};
 
 const render = () => {
   const markdown = editor.value;
@@ -193,12 +201,53 @@ editor.addEventListener('keydown', (e) => {
 
 editor.addEventListener('input', () => {
   saveToHistory();
+  updateLineNumbers();
   render();
+});
+
+editor.addEventListener('scroll', () => {
+  lineNumbers.scrollTop = editor.scrollTop;
 });
 
 editor.addEventListener('select', updateButtonStates);
 editor.addEventListener('click', updateButtonStates);
 editor.addEventListener('keyup', updateButtonStates);
 
+// Resizer functionality
+resizer.addEventListener('mousedown', (e) => {
+  isResizing = true;
+  resizer.classList.add('resizing');
+  document.body.style.cursor = 'col-resize';
+  document.body.style.userSelect = 'none';
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!isResizing) return;
+  
+  const container = document.querySelector('.workspace');
+  const containerRect = container.getBoundingClientRect();
+  const leftPanel = container.querySelector('.panel:first-child');
+  const rightPanel = container.querySelector('.right-panel');
+  
+  const offsetX = e.clientX - containerRect.left;
+  const totalWidth = containerRect.width;
+  const leftWidth = (offsetX / totalWidth) * 100;
+  
+  if (leftWidth > 20 && leftWidth < 80) {
+    leftPanel.style.flex = `0 0 ${leftWidth}%`;
+    rightPanel.style.flex = `0 0 ${100 - leftWidth}%`;
+  }
+});
+
+document.addEventListener('mouseup', () => {
+  if (isResizing) {
+    isResizing = false;
+    resizer.classList.remove('resizing');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  }
+});
+
 updateButtonStates();
+updateLineNumbers();
 render();
