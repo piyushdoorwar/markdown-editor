@@ -183,6 +183,87 @@ body {
   color: var(--muted);
 }
 
+.toolbar-select,
+.toolbar-color {
+  position: relative;
+  padding: 0.4rem 0.6rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolbar-select {
+  min-width: 120px;
+  padding-right: 1.5rem;
+}
+
+.toolbar-select option {
+  background: var(--panel-bg);
+  color: var(--text);
+  padding: 0.4rem;
+}
+
+.toolbar-select:hover,
+.toolbar-color:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent);
+}
+
+.toolbar-select:disabled,
+.toolbar-color:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.toolbar-color {
+  width: 36px;
+  height: 32px;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.toolbar-color::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.toolbar-color::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+.toolbar-select::after,
+.toolbar-color::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  padding: 0.4rem 0.75rem;
+  background: rgba(12, 18, 35, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.toolbar-select:hover::after,
+.toolbar-color:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
 .toolbar-btn::after {
   content: attr(data-tooltip);
   position: absolute;

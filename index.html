@@ -26,6 +26,12 @@
               <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/>
             </svg>
           </button>
+          <button class="toolbar-btn" data-action="redo" data-tooltip="Redo (Ctrl+Y)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 7v6h-6"/>
+              <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3L21 13"/>
+            </svg>
+          </button>
           <button class="toolbar-btn" data-action="copy" data-tooltip="Copy All">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
@@ -54,14 +60,17 @@
               <path d="M4 12h8m-8-6v12m8-12v12m4-12h4m-4 6h4m-4 6h4"/>
             </svg>
           </button>
-          <button class="toolbar-btn" data-action="font" data-tooltip="Font Family" data-requires-selection="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4.5 20h15"/>
-              <path d="M7 4L12 20"/>
-              <path d="M12 20l5-16"/>
-              <path d="M9 12h6"/>
-            </svg>
-          </button>
+          <select class="toolbar-select" data-action="font" data-tooltip="Font Family" data-requires-selection="true">
+            <option value="">Font</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="'Courier New', monospace">Courier New</option>
+            <option value="'Comic Sans MS', cursive">Comic Sans</option>
+            <option value="Impact, fantasy">Impact</option>
+            <option value="'Times New Roman', serif">Times New Roman</option>
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="Verdana, sans-serif">Verdana</option>
+          </select>
+          <input type="color" class="toolbar-color" data-action="highlight" data-tooltip="Highlight Color" data-requires-selection="true" value="#ffff00">
           <button class="toolbar-btn" data-action="bold" data-tooltip="Bold (Ctrl+B)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6zM6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/>

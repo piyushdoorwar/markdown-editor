@@ -6,6 +6,7 @@ const resizer = document.getElementById('resizer');
 let history = [];
 let historyIndex = -1;
 let isResizing = false;
+let isUndoRedoAction = false;
 
 const initialMarkdown = `# Welcome to your markdown editor
 
@@ -22,6 +23,11 @@ Write markdown on the left, and the preview updates instantly on the right.
 editor.value = initialMarkdown;
 
 const saveToHistory = () => {
+  if (isUndoRedoAction) {
+    isUndoRedoAction = false;
+    return;
+  }
+  
   const current = editor.value;
   if (historyIndex === -1 || history[historyIndex] !== current) {
     history = history.slice(0, historyIndex + 1);
@@ -48,12 +54,36 @@ const render = () => {
 
 const updateButtonStates = () => {
   const hasSelection = editor.selectionStart !== editor.selectionEnd;
+  
+  // Update buttons
   document.querySelectorAll('.toolbar-btn[data-requires-selection]').forEach(btn => {
     btn.disabled = !hasSelection;
     if (!hasSelection) {
       btn.dataset.tooltip = btn.dataset.tooltip.split(' (')[0] + ' (Select text first)';
     } else {
       btn.dataset.tooltip = btn.dataset.tooltip.split(' (')[0];
+    }
+  });
+  
+  // Update selects
+  document.querySelectorAll('.toolbar-select[data-requires-selection]').forEach(select => {
+    select.disabled = !hasSelection;
+    const baseTooltip = select.dataset.tooltip.split(' (')[0];
+    if (!hasSelection) {
+      select.dataset.tooltip = baseTooltip + ' (Select text first)';
+    } else {
+      select.dataset.tooltip = baseTooltip;
+    }
+  });
+  
+  // Update color pickers
+  document.querySelectorAll('.toolbar-color[data-requires-selection]').forEach(colorPicker => {
+    colorPicker.disabled = !hasSelection;
+    const baseTooltip = colorPicker.dataset.tooltip.split(' (')[0];
+    if (!hasSelection) {
+      colorPicker.dataset.tooltip = baseTooltip + ' (Select text first)';
+    } else {
+      colorPicker.dataset.tooltip = baseTooltip;
     }
   });
 };
@@ -96,9 +126,22 @@ const insertAtLine = (text) => {
 const actions = {
   undo: () => {
     if (historyIndex > 0) {
+      isUndoRedoAction = true;
       historyIndex--;
       editor.value = history[historyIndex];
+      updateLineNumbers();
       render();
+      updateButtonStates();
+    }
+  },
+  redo: () => {
+    if (historyIndex < history.length - 1) {
+      isUndoRedoAction = true;
+      historyIndex++;
+      editor.value = history[historyIndex];
+      updateLineNumbers();
+      render();
+      updateButtonStates();
     }
   },
   copy: async () => {
@@ -131,22 +174,20 @@ const actions = {
     URL.revokeObjectURL(url);
   },
   heading: () => insertAtLine('## '),
-  font: () => {
+  font: (fontFamily) => {
     const start = editor.selectionStart;
     const end = editor.selectionEnd;
     const selectedText = editor.value.substring(start, end);
-    if (selectedText) {
-      const fonts = [
-        'Georgia, serif',
-        'Courier New, monospace',
-        'Comic Sans MS, cursive',
-        'Impact, fantasy',
-        'Times New Roman, serif',
-        'Arial, sans-serif',
-        'Verdana, sans-serif'
-      ];
-      const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
-      insertAtCursor(`<span style="font-family: ${randomFont};">`, '</span>');
+    if (selectedText && fontFamily) {
+      insertAtCursor(`<span style="font-family: ${fontFamily};">`, '</span>');
+    }
+  },
+  highlight: (color) => {
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const selectedText = editor.value.substring(start, end);
+    if (selectedText && color) {
+      insertAtCursor(`<mark style="background-color: ${color};">`, '</mark>');
     }
   },
   bold: () => insertAtCursor('**', '**', 'bold text'),
@@ -175,7 +216,50 @@ const actions = {
     }
   },
   image: () => insertAtCursor('![', '](image-url)', 'alt text'),
-  table: () => insertAtCursor('\n| Header 1 | Header 2 |\n|----------|----------|\n| Cell 1   | Cell 2   |\n', '', ''),
+  table: () => {
+    const rows = prompt('Number of rows:', '3');
+    const cols = prompt('Number of columns:', '3');
+    const align = prompt('Text alignment (left/center/right):', 'left').toLowerCase();
+    
+    if (!rows || !cols || isNaN(rows) || isNaN(cols)) return;
+    
+    const numRows = parseInt(rows);
+    const numCols = parseInt(cols);
+    
+    // Alignment characters
+    let alignChar = '---';
+    if (align === 'center') alignChar = ':---:';
+    else if (align === 'right') alignChar = '---:';
+    else if (align === 'left') alignChar = ':---';
+    
+    // Build table
+    let table = '\n';
+    
+    // Header row
+    table += '|';
+    for (let i = 1; i <= numCols; i++) {
+      table += ` Header ${i} |`;
+    }
+    table += '\n';
+    
+    // Separator row
+    table += '|';
+    for (let i = 0; i < numCols; i++) {
+      table += ` ${alignChar} |`;
+    }
+    table += '\n';
+    
+    // Data rows
+    for (let r = 1; r <= numRows; r++) {
+      table += '|';
+      for (let c = 1; c <= numCols; c++) {
+        table += ` Cell ${r},${c} |`;
+      }
+      table += '\n';
+    }
+    
+    insertAtCursor(table, '', '');
+  },
   hr: () => insertAtCursor('\n---\n', '', ''),
   comment: () => {
     const start = editor.selectionStart;
@@ -198,6 +282,50 @@ document.querySelectorAll('.toolbar-btn').forEach(btn => {
   });
 });
 
+// Attach select listeners
+document.querySelectorAll('.toolbar-select').forEach(select => {
+  select.addEventListener('change', (e) => {
+    const action = select.dataset.action;
+    const value = select.value;
+    if (actions[action] && value) {
+      // Save selection before action
+      const savedStart = editor.selectionStart;
+      const savedEnd = editor.selectionEnd;
+      
+      actions[action](value);
+      
+      // Restore selection after action
+      setTimeout(() => {
+        editor.focus();
+        editor.setSelectionRange(savedStart, savedEnd);
+      }, 0);
+      
+      select.value = ''; // Reset to default
+    }
+  });
+});
+
+// Attach color picker listeners
+document.querySelectorAll('.toolbar-color').forEach(colorPicker => {
+  colorPicker.addEventListener('change', (e) => {
+    const action = colorPicker.dataset.action;
+    const value = colorPicker.value;
+    if (actions[action]) {
+      // Save selection before action
+      const savedStart = editor.selectionStart;
+      const savedEnd = editor.selectionEnd;
+      
+      actions[action](value);
+      
+      // Restore selection after action
+      setTimeout(() => {
+        editor.focus();
+        editor.setSelectionRange(savedStart, savedEnd);
+      }, 0);
+    }
+  });
+});
+
 // Keyboard shortcuts
 editor.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey) {
@@ -212,7 +340,17 @@ editor.addEventListener('keydown', (e) => {
         break;
       case 'z':
         e.preventDefault();
-        actions.undo();
+        if (e.shiftKey) {
+          actions.redo();
+        } else {
+          actions.undo();
+        }
+        break;
+      case 'y':
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          actions.redo();
+        }
         break;
     }
   }

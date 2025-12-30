@@ -8,10 +8,12 @@ A modern, feature-rich markdown editor with live preview and an elegant dark the
 - **Line Numbers**: Professional code editor with synchronized line numbering
 - **Comprehensive Toolbar**: Quick access to all markdown formatting options
   - File operations: Undo, Copy, Paste, Download
-  - Text formatting: Headings, Font Family, Bold, Italic, Underline, Strikethrough
+  - Text formatting: Headings, Font Family (dropdown selector), Bold, Italic, Underline, Strikethrough
+  - Text highlighting: Color picker for highlighting text with custom colors
   - Code blocks: Inline code and code blocks
-  - Content insertion: Quotes, Lists, Tables, Links, Images
+  - Content insertion: Quotes, Lists, Tables (with custom rows/cols/alignment), Links, Images
   - Special elements: Horizontal rules, HTML comments
+- **Interactive Table Builder**: Prompts for rows, columns, and text alignment before inserting
 - **Resizable Panels**: Drag the divider to adjust editor/preview split
 - **Custom Scrollbars**: Stylish gradient scrollbars matching the theme
 - **Full-Height Layout**: Maximizes workspace on desktop screens
@@ -26,6 +28,8 @@ Simply open `index.html` in a modern web browser. No build process or dependenci
 - `Ctrl+B` / `Cmd+B` - Bold
 - `Ctrl+I` / `Cmd+I` - Italic
 - `Ctrl+Z` / `Cmd+Z` - Undo
+- `Ctrl+Y` / `Cmd+Y` - Redo
+- `Ctrl+Shift+Z` / `Cmd+Shift+Z` - Redo
 
 ### Features Detail
 
