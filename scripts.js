@@ -109,6 +109,8 @@ const insertAtCursor = (before, after = '', placeholder = '') => {
   }
   
   editor.focus();
+  saveToHistory();
+  updateLineNumbers();
   render();
 };
 
@@ -120,6 +122,8 @@ const insertAtLine = (text) => {
   editor.value = editor.value.substring(0, lineStart) + text + editor.value.substring(lineStart);
   editor.selectionStart = editor.selectionEnd = lineStart + text.length;
   editor.focus();
+  saveToHistory();
+  updateLineNumbers();
   render();
 };
 
@@ -159,6 +163,7 @@ const actions = {
       editor.value = editor.value.substring(0, start) + text + editor.value.substring(editor.selectionEnd);
       editor.selectionStart = editor.selectionEnd = start + text.length;
       saveToHistory();
+      updateLineNumbers();
       render();
     } catch (err) {
       console.log('Paste from clipboard not available, use Ctrl+V');
