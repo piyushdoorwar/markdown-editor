@@ -131,8 +131,27 @@ const actions = {
     URL.revokeObjectURL(url);
   },
   heading: () => insertAtLine('## '),
+  font: () => {
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const selectedText = editor.value.substring(start, end);
+    if (selectedText) {
+      const fonts = [
+        'Georgia, serif',
+        'Courier New, monospace',
+        'Comic Sans MS, cursive',
+        'Impact, fantasy',
+        'Times New Roman, serif',
+        'Arial, sans-serif',
+        'Verdana, sans-serif'
+      ];
+      const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+      insertAtCursor(`<span style="font-family: ${randomFont};">`, '</span>');
+    }
+  },
   bold: () => insertAtCursor('**', '**', 'bold text'),
   italic: () => insertAtCursor('*', '*', 'italic text'),
+  underline: () => insertAtCursor('<u>', '</u>', 'underlined text'),
   strikethrough: () => {
     const start = editor.selectionStart;
     const end = editor.selectionEnd;
