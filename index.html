@@ -313,5 +313,111 @@
       </div>
     </div>
 
+    <!-- Code Block Modal -->
+    <div class="modal" id="codeBlockModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Insert Code Block</h2>
+          <button class="modal-close" onclick="closeModal('codeBlockModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="codeLanguage">Language:</label>
+            <select id="codeLanguage">
+              <option value="">Plain Text</option>
+              <option value="javascript">JavaScript</option>
+              <option value="typescript">TypeScript</option>
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+              <option value="csharp">C#</option>
+              <option value="cpp">C++</option>
+              <option value="c">C</option>
+              <option value="php">PHP</option>
+              <option value="ruby">Ruby</option>
+              <option value="go">Go</option>
+              <option value="rust">Rust</option>
+              <option value="swift">Swift</option>
+              <option value="kotlin">Kotlin</option>
+              <option value="html">HTML</option>
+              <option value="css">CSS</option>
+              <option value="scss">SCSS</option>
+              <option value="json">JSON</option>
+              <option value="xml">XML</option>
+              <option value="yaml">YAML</option>
+              <option value="markdown">Markdown</option>
+              <option value="bash">Bash</option>
+              <option value="shell">Shell</option>
+              <option value="powershell">PowerShell</option>
+              <option value="sql">SQL</option>
+              <option value="r">R</option>
+              <option value="matlab">MATLAB</option>
+              <option value="latex">LaTeX</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="codeContent">Code (optional):</label>
+            <textarea id="codeContent" rows="8" placeholder="Enter your code here..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('codeBlockModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="insertCodeBlock()">Add Code Block</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Code Block Modal -->
+    <div class="modal" id="codeBlockModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Insert Code Block</h2>
+          <button class="modal-close" onclick="closeModal('codeBlockModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="codeLanguage">Language:</label>
+            <select id="codeLanguage">
+              <option value="">Plain Text</option>
+              <option value="javascript">JavaScript</option>
+              <option value="typescript">TypeScript</option>
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+              <option value="csharp">C#</option>
+              <option value="cpp">C++</option>
+              <option value="c">C</option>
+              <option value="php">PHP</option>
+              <option value="ruby">Ruby</option>
+              <option value="go">Go</option>
+              <option value="rust">Rust</option>
+              <option value="swift">Swift</option>
+              <option value="kotlin">Kotlin</option>
+              <option value="html">HTML</option>
+              <option value="css">CSS</option>
+              <option value="scss">SCSS</option>
+              <option value="json">JSON</option>
+              <option value="xml">XML</option>
+              <option value="yaml">YAML</option>
+              <option value="markdown">Markdown</option>
+              <option value="bash">Bash</option>
+              <option value="shell">Shell</option>
+              <option value="powershell">PowerShell</option>
+              <option value="sql">SQL</option>
+              <option value="r">R</option>
+              <option value="matlab">MATLAB</option>
+              <option value="latex">LaTeX</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="codeContent">Code (optional):</label>
+            <textarea id="codeContent" rows="8" placeholder="Enter your code here..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('codeBlockModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="insertCodeBlock()">Add Code Block</button>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>

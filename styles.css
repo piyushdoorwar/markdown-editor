@@ -410,6 +410,65 @@ textarea::selection {
 
 .preview a {
   color: var(--accent);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.preview a:hover {
+  text-decoration: underline;
+  color: var(--accent-strong);
+}
+
+.preview table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.preview table th,
+.preview table td {
+  border: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.preview table th {
+  background: rgba(45, 227, 255, 0.1);
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+}
+
+.preview table tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.preview table td {
+  color: var(--text);
+}
+
+.preview ul,
+.preview ol {
+  padding-left: 1.5rem;
+}
+
+.preview ul li,
+.preview ol li {
+  margin-bottom: 0.5rem;
+}
+
+.preview pre {
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.preview pre code {
+  padding: 0;
+  background: transparent;
 }
 
 @media (max-width: 768px) {
@@ -471,6 +530,10 @@ textarea::selection {
 
 .modal-content-small {
   max-width: 380px;
+}
+
+.modal-content-large {
+  max-width: 700px;
 }
 
 @keyframes modalSlideIn {
@@ -550,7 +613,8 @@ textarea::selection {
 .form-group input[type="text"],
 .form-group input[type="number"],
 .form-group input[type="url"],
-.form-group select {
+.form-group select,
+.form-group textarea {
   width: 100%;
   padding: 0.75rem 1rem;
   background: rgba(255, 255, 255, 0.05);
@@ -562,8 +626,60 @@ textarea::selection {
   transition: all 0.2s ease;
 }
 
+.language-select {
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.language-select option {
+  background: var(--panel-bg);
+  color: var(--text);
+}
+
+.form-group textarea {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.code-editor-group {
+  margin-bottom: 0;
+}
+
+.code-editor-group label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.code-editor {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(45, 227, 255, 0.2) !important;
+  font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+  font-size: 0.95rem !important;
+  line-height: 1.6 !important;
+  padding: 1rem !important;
+  min-height: 320px !important;
+  resize: vertical;
+  tab-size: 2;
+  -moz-tab-size: 2;
+}
+
+.code-editor:focus {
+  border-color: var(--accent) !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 0 0 3px rgba(45, 227, 255, 0.15) !important;
+}
+
+.code-editor::placeholder {
+  color: rgba(245, 248, 255, 0.3);
+  font-style: italic;
+}
+
 .form-group input:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
   outline: none;
   border-color: var(--accent);
   background: rgba(255, 255, 255, 0.08);

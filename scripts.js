@@ -8,17 +8,83 @@ let historyIndex = -1;
 let isResizing = false;
 let isUndoRedoAction = false;
 
-const initialMarkdown = `# Welcome to your markdown editor
+const initialMarkdown = `# Markdown Editor Guide
 
-Write markdown on the left, and the preview updates instantly on the right.
+Welcome! This editor supports **all standard markdown features** with live preview.
 
-## Features
+## Text Formatting
 
-- Inspired by the json-diff aesthetic
-- Two-panel focus layout
-- Seamless live rendering
+You can make text **bold**, *italic*, ***bold and italic***, ~~strikethrough~~, or use <u>underline</u>.
 
-> Paste or import markdown to see it instantly rendered.`;
+Inline code can be formatted like this: \`const greeting = "Hello World"\`
+
+## Code Blocks
+
+Support for syntax highlighting across multiple languages:
+
+\`\`\`javascript
+function fibonacci(n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+console.log(fibonacci(10));
+\`\`\`
+
+## Lists & Tasks
+
+### Unordered Lists
+- Design beautiful interfaces
+- Write clean code
+- Ship quality products
+
+### Ordered Lists
+1. Plan your project
+2. Build the features
+3. Test thoroughly
+4. Deploy to production
+
+### Task Lists
+- [x] Create markdown editor
+- [x] Add live preview
+- [ ] Implement export features
+- [ ] Add theme customization
+
+## Tables
+
+Create structured data with tables:
+
+| Feature | Status | Priority |
+| :--- | :---: | ---: |
+| Live Preview | ✅ Complete | High |
+| Code Blocks | ✅ Complete | High |
+| Tables | ✅ Complete | Medium |
+| Image Upload | ✅ Complete | Medium |
+| Export | 🔄 In Progress | Low |
+
+## Links & Quotes
+
+Check out the [Markdown Guide](https://www.markdownguide.org/) for more information.
+
+> "The best way to predict the future is to invent it."
+> — Alan Kay
+
+## Additional Elements
+
+### Horizontal Rule
+
+---
+
+### HTML Elements
+
+You can use <span style="color: #2de3ff;">custom colors</span> and other HTML when needed.
+
+<!-- This is a comment and won't appear in the preview -->
+
+## Ready to Start?
+
+Clear this content and start writing your own markdown! Use the toolbar above for quick formatting.
+`;
 
 editor.value = initialMarkdown;
 
@@ -199,7 +265,20 @@ const actions = {
     }
   },
   code: () => insertAtCursor('`', '`', 'code'),
-  codeblock: () => insertAtCursor('\n```\n', '\n```\n', 'code block'),
+  codeblock: () => {
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const selectedText = editor.value.substring(start, end);
+    
+    // Store selection for later use
+    window.codeBlockSelection = { start, end, selectedText };
+    
+    // Pre-fill code content with selected text
+    document.getElementById('codeContent').value = selectedText;
+    document.getElementById('codeLanguage').value = '';
+    
+    openModal('codeBlockModal');
+  },
   quote: () => insertAtLine('> '),
   ul: () => insertAtLine('- '),
   ol: () => insertAtLine('1. '),
@@ -591,4 +670,34 @@ function insertLink() {
   editor.focus();
   
   closeModal('linkModal');
+}
+
+// Code Block Modal Functions
+function insertCodeBlock() {
+  const language = document.getElementById('codeLanguage').value;
+  const content = document.getElementById('codeContent').value;
+  
+  const langSpec = language ? language : '';
+  const codeText = content || 'your code here';
+  const markdown = `\n\`\`\`${langSpec}\n${codeText}\n\`\`\`\n`;
+  
+  const selection = window.codeBlockSelection || { start: editor.selectionStart, end: editor.selectionEnd };
+  
+  editor.value = editor.value.substring(0, selection.start) + markdown + editor.value.substring(selection.end);
+  
+  // Position cursor inside the code block
+  if (!content) {
+    const cursorPos = selection.start + langSpec.length + 5; // After ```lang\n
+    editor.selectionStart = cursorPos;
+    editor.selectionEnd = cursorPos + 14; // Select "your code here"
+  } else {
+    editor.selectionStart = editor.selectionEnd = selection.start + markdown.length;
+  }
+  
+  saveToHistory();
+  updateLineNumbers();
+  render();
+  editor.focus();
+  
+  closeModal('codeBlockModal');
 }
