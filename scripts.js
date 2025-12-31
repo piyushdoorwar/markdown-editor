@@ -179,20 +179,12 @@ const actions = {
     URL.revokeObjectURL(url);
   },
   heading: () => insertAtLine('## '),
-  font: (fontFamily) => {
-    const start = editor.selectionStart;
-    const end = editor.selectionEnd;
-    const selectedText = editor.value.substring(start, end);
-    if (selectedText && fontFamily) {
-      insertAtCursor(`<span style="font-family: ${fontFamily};">`, '</span>');
-    }
-  },
-  highlight: (color) => {
+  fontcolor: (color) => {
     const start = editor.selectionStart;
     const end = editor.selectionEnd;
     const selectedText = editor.value.substring(start, end);
     if (selectedText && color) {
-      insertAtCursor(`<mark style="background-color: ${color};">`, '</mark>');
+      insertAtCursor(`<span style="color: ${color};">`, '</span>');
     }
   },
   bold: () => insertAtCursor('**', '**', 'bold text'),
