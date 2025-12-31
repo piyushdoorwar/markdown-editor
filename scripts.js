@@ -807,3 +807,31 @@ function clearCodeBlock() {
   updateCodeLineNumbers();
   codeContent.focus();
 }
+
+// Copy preview content
+function copyPreviewContent() {
+  const preview = document.getElementById('preview');
+  const button = document.querySelector('.preview-copy-btn');
+  
+  const htmlContent = preview.innerHTML;
+  const textContent = preview.innerText;
+  
+  const blob = new Blob([htmlContent], { type: 'text/html' });
+  const plainBlob = new Blob([textContent], { type: 'text/plain' });
+  
+  const clipboardItem = new ClipboardItem({
+    'text/html': blob,
+    'text/plain': plainBlob
+  });
+  
+  navigator.clipboard.write([clipboardItem]).then(() => {
+    button.classList.add('copied');
+    setTimeout(() => button.classList.remove('copied'), 2000);
+  }).catch(() => {
+    navigator.clipboard.writeText(textContent).then(() => {
+      button.classList.add('copied');
+      setTimeout(() => button.classList.remove('copied'), 2000);
+    }).catch(err => console.error('Failed to copy:', err));
+  });
+}
+
