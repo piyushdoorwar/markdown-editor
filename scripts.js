@@ -208,54 +208,33 @@ const actions = {
     const start = editor.selectionStart;
     const end = editor.selectionEnd;
     const selectedText = editor.value.substring(start, end);
-    if (selectedText) {
-      insertAtCursor('[', '](url)');
-    }
+    
+    // Store selection for later use
+    window.linkSelection = { start, end, selectedText };
+    
+    // Pre-fill the link text with selected text
+    document.getElementById('linkText').value = selectedText;
+    document.getElementById('linkUrl').value = '';
+    
+    openModal('linkModal');
   },
-  image: () => insertAtCursor('![', '](image-url)', 'alt text'),
+  image: () => {
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const selectedText = editor.value.substring(start, end);
+    
+    // Store selection for later use
+    window.imageSelection = { start, end, selectedText };
+    
+    // Pre-fill alt text with selected text
+    document.getElementById('imageAlt').value = selectedText;
+    document.getElementById('imageUrl').value = '';
+    document.getElementById('imagePreview').innerHTML = '';
+    
+    openModal('imageModal');
+  },
   table: () => {
-    const rows = prompt('Number of rows:', '3');
-    const cols = prompt('Number of columns:', '3');
-    const align = prompt('Text alignment (left/center/right):', 'left').toLowerCase();
-    
-    if (!rows || !cols || isNaN(rows) || isNaN(cols)) return;
-    
-    const numRows = parseInt(rows);
-    const numCols = parseInt(cols);
-    
-    // Alignment characters
-    let alignChar = '---';
-    if (align === 'center') alignChar = ':---:';
-    else if (align === 'right') alignChar = '---:';
-    else if (align === 'left') alignChar = ':---';
-    
-    // Build table
-    let table = '\n';
-    
-    // Header row
-    table += '|';
-    for (let i = 1; i <= numCols; i++) {
-      table += ` Header ${i} |`;
-    }
-    table += '\n';
-    
-    // Separator row
-    table += '|';
-    for (let i = 0; i < numCols; i++) {
-      table += ` ${alignChar} |`;
-    }
-    table += '\n';
-    
-    // Data rows
-    for (let r = 1; r <= numRows; r++) {
-      table += '|';
-      for (let c = 1; c <= numCols; c++) {
-        table += ` Cell ${r},${c} |`;
-      }
-      table += '\n';
-    }
-    
-    insertAtCursor(table, '', '');
+    openModal('tableModal');
   },
   hr: () => insertAtCursor('\n---\n', '', ''),
   comment: () => {
@@ -405,3 +384,211 @@ document.addEventListener('mouseup', () => {
 updateButtonStates();
 updateLineNumbers();
 render();
+// Modal Functions
+function openModal(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.classList.add('active');
+  
+  // Focus first input
+  setTimeout(() => {
+    const firstInput = modal.querySelector('input:not([type="file"])');
+    if (firstInput) firstInput.focus();
+  }, 100);
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.classList.remove('active');
+}
+
+// Close modal on outside click
+document.querySelectorAll('.modal').forEach(modal => {
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal(modal.id);
+    }
+  });
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal.active').forEach(modal => {
+      closeModal(modal.id);
+    });
+  }
+});
+
+// Table Modal Functions
+let selectedTableAlign = 'left';
+
+function selectAlign(align) {
+  selectedTableAlign = align;
+  document.querySelectorAll('.align-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.querySelector(`.align-btn[data-align="${align}"]`).classList.add('active');
+}
+
+function insertTable() {
+  const rows = parseInt(document.getElementById('tableRows').value);
+  const cols = parseInt(document.getElementById('tableCols').value);
+  const align = selectedTableAlign;
+  
+  if (!rows || !cols || rows < 1 || cols < 1) {
+    alert('Please enter valid numbers for rows and columns');
+    return;
+  }
+  
+  // Alignment characters
+  let alignChar = '---';
+  if (align === 'center') alignChar = ':---:';
+  else if (align === 'right') alignChar = '---:';
+  else if (align === 'left') alignChar = ':---';
+  
+  // Build table
+  let table = '\n';
+  
+  // Header row
+  table += '|';
+  for (let i = 1; i <= cols; i++) {
+    table += ` Header ${i} |`;
+  }
+  table += '\n';
+  
+  // Separator row
+  table += '|';
+  for (let i = 0; i < cols; i++) {
+    table += ` ${alignChar} |`;
+  }
+  table += '\n';
+  
+  // Data rows
+  for (let r = 1; r <= rows; r++) {
+    table += '|';
+    for (let c = 1; c <= cols; c++) {
+      table += ` Cell ${r},${c} |`;
+    }
+    table += '\n';
+  }
+  
+  insertAtCursor(table, '', '');
+  closeModal('tableModal');
+}
+
+// Image Modal Functions
+let selectedImageFile = null;
+
+const imageUploadArea = document.getElementById('imageUploadArea');
+const imageFileInput = document.getElementById('imageFileInput');
+
+imageUploadArea.addEventListener('click', () => {
+  imageFileInput.click();
+});
+
+imageFileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file && file.type.startsWith('image/')) {
+    handleImageFile(file);
+  }
+});
+
+// Drag and drop functionality
+imageUploadArea.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  imageUploadArea.classList.add('drag-over');
+});
+
+imageUploadArea.addEventListener('dragleave', () => {
+  imageUploadArea.classList.remove('drag-over');
+});
+
+imageUploadArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  imageUploadArea.classList.remove('drag-over');
+  
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    handleImageFile(file);
+  }
+});
+
+function handleImageFile(file) {
+  selectedImageFile = file;
+  
+  // Show preview
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const preview = document.getElementById('imagePreview');
+    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+  };
+  reader.readAsDataURL(file);
+  
+  // Clear URL input
+  document.getElementById('imageUrl').value = '';
+}
+
+function insertImage() {
+  const altText = document.getElementById('imageAlt').value || 'image';
+  let imageUrl = document.getElementById('imageUrl').value;
+  
+  // If file is selected, convert to base64
+  if (selectedImageFile) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const markdown = `![${altText}](${e.target.result})`;
+      const selection = window.imageSelection || { start: editor.selectionStart, end: editor.selectionEnd };
+      
+      editor.value = editor.value.substring(0, selection.start) + markdown + editor.value.substring(selection.end);
+      editor.selectionStart = editor.selectionEnd = selection.start + markdown.length;
+      
+      saveToHistory();
+      updateLineNumbers();
+      render();
+      editor.focus();
+      
+      closeModal('imageModal');
+      selectedImageFile = null;
+    };
+    reader.readAsDataURL(selectedImageFile);
+  } else if (imageUrl) {
+    const markdown = `![${altText}](${imageUrl})`;
+    const selection = window.imageSelection || { start: editor.selectionStart, end: editor.selectionEnd };
+    
+    editor.value = editor.value.substring(0, selection.start) + markdown + editor.value.substring(selection.end);
+    editor.selectionStart = editor.selectionEnd = selection.start + markdown.length;
+    
+    saveToHistory();
+    updateLineNumbers();
+    render();
+    editor.focus();
+    
+    closeModal('imageModal');
+  } else {
+    alert('Please select an image or enter an image URL');
+  }
+}
+
+// Link Modal Functions
+function insertLink() {
+  const linkText = document.getElementById('linkText').value;
+  const linkUrl = document.getElementById('linkUrl').value;
+  
+  if (!linkText || !linkUrl) {
+    alert('Please enter both link text and URL');
+    return;
+  }
+  
+  const markdown = `[${linkText}](${linkUrl})`;
+  const selection = window.linkSelection || { start: editor.selectionStart, end: editor.selectionEnd };
+  
+  editor.value = editor.value.substring(0, selection.start) + markdown + editor.value.substring(selection.end);
+  editor.selectionStart = editor.selectionEnd = selection.start + markdown.length;
+  
+  saveToHistory();
+  updateLineNumbers();
+  render();
+  editor.focus();
+  
+  closeModal('linkModal');
+}

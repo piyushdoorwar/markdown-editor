@@ -201,5 +201,117 @@
         </section>
       </main>
     </div>
+
+    <!-- Table Modal -->
+    <div class="modal" id="tableModal">
+      <div class="modal-content modal-content-small">
+        <div class="modal-header">
+          <h2>Insert Table</h2>
+          <button class="modal-close" onclick="closeModal('tableModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="table-size-group">
+            <label>Rows:</label>
+            <input type="number" id="tableRows" min="1" value="3" class="table-size-input">
+            <span class="table-size-separator">×</span>
+            <label>Cols:</label>
+            <input type="number" id="tableCols" min="1" value="3" class="table-size-input">
+          </div>
+          <div class="form-group">
+            <label>Alignment:</label>
+            <div class="align-buttons">
+              <button class="align-btn active" data-align="left" data-tooltip="Left" onclick="selectAlign('left')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="17" y1="10" x2="3" y2="10"/>
+                  <line x1="21" y1="6" x2="3" y2="6"/>
+                  <line x1="21" y1="14" x2="3" y2="14"/>
+                  <line x1="17" y1="18" x2="3" y2="18"/>
+                </svg>
+              </button>
+              <button class="align-btn" data-align="center" data-tooltip="Center" onclick="selectAlign('center')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="10" x2="6" y2="10"/>
+                  <line x1="21" y1="6" x2="3" y2="6"/>
+                  <line x1="21" y1="14" x2="3" y2="14"/>
+                  <line x1="18" y1="18" x2="6" y2="18"/>
+                </svg>
+              </button>
+              <button class="align-btn" data-align="right" data-tooltip="Right" onclick="selectAlign('right')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="21" y1="10" x2="7" y2="10"/>
+                  <line x1="21" y1="6" x2="3" y2="6"/>
+                  <line x1="21" y1="14" x2="3" y2="14"/>
+                  <line x1="21" y1="18" x2="7" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('tableModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="insertTable()">Add Table</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal" id="imageModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Insert Image</h2>
+          <button class="modal-close" onclick="closeModal('imageModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="imageAlt">Alt Text:</label>
+            <input type="text" id="imageAlt" placeholder="Description of the image">
+          </div>
+          <div class="form-group">
+            <label>Image Source:</label>
+            <div class="image-upload-area" id="imageUploadArea">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <p>Drag & drop an image here or click to select</p>
+              <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
+            </div>
+            <div class="or-divider">OR</div>
+            <input type="text" id="imageUrl" placeholder="Enter image URL">
+          </div>
+          <div id="imagePreview"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('imageModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="insertImage()">Add Image</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Link Modal -->
+    <div class="modal" id="linkModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Insert Link</h2>
+          <button class="modal-close" onclick="closeModal('linkModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="linkText">Link Text:</label>
+            <input type="text" id="linkText" placeholder="Text to display">
+          </div>
+          <div class="form-group">
+            <label for="linkUrl">URL:</label>
+            <input type="url" id="linkUrl" placeholder="https://example.com">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('linkModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="insertLink()">Add Link</button>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>
