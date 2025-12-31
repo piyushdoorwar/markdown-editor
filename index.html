@@ -6,6 +6,8 @@
     <title>Markdown Diff Editor</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script defer src="scripts.js"></script>
   </head>
@@ -194,8 +196,16 @@
 
         <section class="panel right-panel">
           <div class="panel-header">
-            <span>Preview</span>
-            <span class="hint">Rendered output</span>
+            <div>
+              <span>Preview</span>
+              <span class="hint">Rendered output</span>
+            </div>
+            <button class="preview-copy-btn" onclick="copyPreviewContent()" data-tooltip="Copy rendered HTML">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+              </svg>
+            </button>
           </div>
           <div id="preview" class="preview" aria-live="polite"></div>
         </section>
@@ -315,101 +325,69 @@
 
     <!-- Code Block Modal -->
     <div class="modal" id="codeBlockModal">
-      <div class="modal-content">
+      <div class="modal-content modal-content-large">
         <div class="modal-header">
           <h2>Insert Code Block</h2>
           <button class="modal-close" onclick="closeModal('codeBlockModal')">&times;</button>
         </div>
         <div class="modal-body">
-          <div class="form-group">
-            <label for="codeLanguage">Language:</label>
-            <select id="codeLanguage">
-              <option value="">Plain Text</option>
-              <option value="javascript">JavaScript</option>
-              <option value="typescript">TypeScript</option>
-              <option value="python">Python</option>
-              <option value="java">Java</option>
-              <option value="csharp">C#</option>
-              <option value="cpp">C++</option>
-              <option value="c">C</option>
-              <option value="php">PHP</option>
-              <option value="ruby">Ruby</option>
-              <option value="go">Go</option>
-              <option value="rust">Rust</option>
-              <option value="swift">Swift</option>
-              <option value="kotlin">Kotlin</option>
-              <option value="html">HTML</option>
-              <option value="css">CSS</option>
-              <option value="scss">SCSS</option>
-              <option value="json">JSON</option>
-              <option value="xml">XML</option>
-              <option value="yaml">YAML</option>
-              <option value="markdown">Markdown</option>
-              <option value="bash">Bash</option>
-              <option value="shell">Shell</option>
-              <option value="powershell">PowerShell</option>
-              <option value="sql">SQL</option>
-              <option value="r">R</option>
-              <option value="matlab">MATLAB</option>
-              <option value="latex">LaTeX</option>
-            </select>
+          <div class="code-modal-toolbar">
+            <div class="code-toolbar-left">
+              <button class="code-toolbar-btn" onclick="pasteCodeBlock()" data-tooltip="Paste (Ctrl+V)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                </svg>
+                <span>Paste</span>
+              </button>
+              <button class="code-toolbar-btn" onclick="clearCodeBlock()" data-tooltip="Clear">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                </svg>
+                <span>Clear</span>
+              </button>
+            </div>
+            <div class="code-toolbar-right">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="language-icon">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
+              <select id="codeLanguage" class="language-select-toolbar">
+                <option value="">Plain Text</option>
+                <option value="javascript">JavaScript</option>
+                <option value="typescript">TypeScript</option>
+                <option value="python">Python</option>
+                <option value="java">Java</option>
+                <option value="csharp">C#</option>
+                <option value="cpp">C++</option>
+                <option value="c">C</option>
+                <option value="php">PHP</option>
+                <option value="ruby">Ruby</option>
+                <option value="go">Go</option>
+                <option value="rust">Rust</option>
+                <option value="swift">Swift</option>
+                <option value="kotlin">Kotlin</option>
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+                <option value="scss">SCSS</option>
+                <option value="json">JSON</option>
+                <option value="xml">XML</option>
+                <option value="yaml">YAML</option>
+                <option value="markdown">Markdown</option>
+                <option value="bash">Bash</option>
+                <option value="shell">Shell</option>
+                <option value="powershell">PowerShell</option>
+                <option value="sql">SQL</option>
+                <option value="r">R</option>
+                <option value="matlab">MATLAB</option>
+                <option value="latex">LaTeX</option>
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="codeContent">Code (optional):</label>
-            <textarea id="codeContent" rows="8" placeholder="Enter your code here..."></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" onclick="closeModal('codeBlockModal')">Cancel</button>
-          <button class="btn btn-primary" onclick="insertCodeBlock()">Add Code Block</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Code Block Modal -->
-    <div class="modal" id="codeBlockModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>Insert Code Block</h2>
-          <button class="modal-close" onclick="closeModal('codeBlockModal')">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="codeLanguage">Language:</label>
-            <select id="codeLanguage">
-              <option value="">Plain Text</option>
-              <option value="javascript">JavaScript</option>
-              <option value="typescript">TypeScript</option>
-              <option value="python">Python</option>
-              <option value="java">Java</option>
-              <option value="csharp">C#</option>
-              <option value="cpp">C++</option>
-              <option value="c">C</option>
-              <option value="php">PHP</option>
-              <option value="ruby">Ruby</option>
-              <option value="go">Go</option>
-              <option value="rust">Rust</option>
-              <option value="swift">Swift</option>
-              <option value="kotlin">Kotlin</option>
-              <option value="html">HTML</option>
-              <option value="css">CSS</option>
-              <option value="scss">SCSS</option>
-              <option value="json">JSON</option>
-              <option value="xml">XML</option>
-              <option value="yaml">YAML</option>
-              <option value="markdown">Markdown</option>
-              <option value="bash">Bash</option>
-              <option value="shell">Shell</option>
-              <option value="powershell">PowerShell</option>
-              <option value="sql">SQL</option>
-              <option value="r">R</option>
-              <option value="matlab">MATLAB</option>
-              <option value="latex">LaTeX</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="codeContent">Code (optional):</label>
-            <textarea id="codeContent" rows="8" placeholder="Enter your code here..."></textarea>
+          <div class="code-editor-container">
+            <div class="code-line-numbers" id="codeLineNumbers">1</div>
+            <textarea id="codeContent" class="code-editor-with-lines" placeholder="Enter your code here..." oninput="updateCodeLineNumbers()" onscroll="syncCodeScroll()"></textarea>
           </div>
         </div>
         <div class="modal-footer">

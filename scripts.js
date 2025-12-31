@@ -115,7 +115,39 @@ const updateLineNumbers = () => {
 
 const render = () => {
   const markdown = editor.value;
+  
+  // Configure marked to use highlight.js
+  marked.setOptions({
+    highlight: function(code, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          return hljs.highlight(code, { language: lang }).value;
+        } catch (err) {}
+      }
+      return code;
+    },
+    langPrefix: 'hljs language-'
+  });
+  
   preview.innerHTML = marked.parse(markdown);
+  
+  // Add language labels to code blocks
+  preview.querySelectorAll('pre code').forEach((block) => {
+    const pre = block.parentElement;
+    const lang = block.className.match(/language-(\w+)/);
+    
+    if (lang && lang[1]) {
+      // Remove existing label if any
+      const existingLabel = pre.querySelector('.code-language-label');
+      if (existingLabel) existingLabel.remove();
+      
+      // Add language label
+      const label = document.createElement('span');
+      label.className = 'code-language-label';
+      label.textContent = lang[1];
+      pre.insertBefore(label, block);
+    }
+  });
 };
 
 const updateButtonStates = () => {
@@ -700,4 +732,78 @@ function insertCodeBlock() {
   editor.focus();
   
   closeModal('codeBlockModal');
+}
+
+// Code editor helper functions
+function updateCodeLineNumbers() {
+  const codeContent = document.getElementById('codeContent');
+  const lineNumbers = document.getElementById('codeLineNumbers');
+  const lines = codeContent.value.split('\n').length;
+  lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
+}
+
+function syncCodeScroll() {
+  const codeContent = document.getElementById('codeContent');
+  const lineNumbers = document.getElementById('codeLineNumbers');
+  lineNumbers.scrollTop = codeContent.scrollTop;
+}
+
+function pasteCodeBlock() {
+  navigator.clipboard.readText().then(text => {
+    const codeContent = document.getElementById('codeContent');
+    const start = codeContent.selectionStart;
+    const end = codeContent.selectionEnd;
+    const currentValue = codeContent.value;
+    
+    codeContent.value = currentValue.substring(0, start) + text + currentValue.substring(end);
+    codeContent.selectionStart = codeContent.selectionEnd = start + text.length;
+    updateCodeLineNumbers();
+    codeContent.focus();
+  }).catch(err => {
+    console.log('Paste failed, use Ctrl+V');
+  });
+}
+
+function clearCodeBlock() {
+  const codeContent = document.getElementById('codeContent');
+  codeContent.value = '';
+  updateCodeLineNumbers();
+  codeContent.focus();
+}
+
+// Code editor helper functions
+function updateCodeLineNumbers() {
+  const codeContent = document.getElementById('codeContent');
+  const lineNumbers = document.getElementById('codeLineNumbers');
+  const lines = codeContent.value.split('\n').length;
+  lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
+}
+
+function syncCodeScroll() {
+  const codeContent = document.getElementById('codeContent');
+  const lineNumbers = document.getElementById('codeLineNumbers');
+  lineNumbers.scrollTop = codeContent.scrollTop;
+}
+
+function pasteCodeBlock() {
+  navigator.clipboard.readText().then(text => {
+    const codeContent = document.getElementById('codeContent');
+    const start = codeContent.selectionStart;
+    const end = codeContent.selectionEnd;
+    const currentValue = codeContent.value;
+    
+    codeContent.value = currentValue.substring(0, start) + text + currentValue.substring(end);
+    codeContent.selectionStart = codeContent.selectionEnd = start + text.length;
+    updateCodeLineNumbers();
+    codeContent.focus();
+  }).catch(err => {
+    console.log('Paste failed, use Ctrl+V');
+  });
+}
+
+function clearCodeBlock() {
+  const codeContent = document.getElementById('codeContent');
+  codeContent.value = '';
+  updateCodeLineNumbers();
+  codeContent.focus();
 }
