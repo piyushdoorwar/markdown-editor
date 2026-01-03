@@ -57,9 +57,10 @@
 ## Atmospheric Blueprint
 
 ### Surface Spectrum
-- **Base Layer**: Start with the solid `--bg` (#0d0d0d) and stack the animated radial gradients defined in `body::before` (purple, yellow, and lavender glows). Keep the animation (`gradientShift` 20s ease infinite) so every tool carries the same slow-breathing premium feel.
-- **Secondary Planes**: Use `--bg-secondary`, `--panel-bg`, and `--panel-bg-elevated` to layer panels. Borders stay at `--border` or `--border-light`, and drop in the soft purple/yellow glows (`--shadow-purple` or `--shadow-yellow`) only on interactive lifted states.
-- **Viewport Treatment**: Maintain the fixed overlay (`pointer-events: none`) so tools built on this system always sit above that atmospheric wash without blocking inputs.
+- **Base Layer**: Start with `--bg` (#0d0d0d) and stack animated radial gradients defined in `body::before` (purple, yellow, and lavender glows) with `gradientShift` 20s animation
+- **Secondary Planes**: Use `--bg-secondary`, `--panel-bg`, and `--panel-bg-elevated` to layer panels with `--border` or `--border-light`
+- **Glows**: Apply soft purple/yellow glows (`--shadow-purple` or `--shadow-yellow`) on interactive lifted states
+- **Viewport**: Maintain fixed overlay with `pointer-events: none` for non-blocking atmospheric effect
 
 ### App Name & Identity
 - Position the name inside the `app-header` with `Inter` 800 weight, 2rem size, and tight letter spacing (–0.02em)
@@ -68,80 +69,26 @@
 - Keep clean without additional shadows—the gradient provides premium feel
 
 ### Action Bar (Toolbar) System
-- The `toolbar` is a flexible surface (`display: flex; gap: 0.5rem`) padded with `1rem 1.25rem`, rounded to 20px, and framed by `var(--border)` so it reads as a dedicated action band.
-- Give it the same background as elevated panels (`var(--panel-bg)`) plus `var(--shadow-md)` so it hovers above the editor. Keep overflow visible so grouped tooltips can peek through.
-- Within that band, group buttons inside `toolbar-group` pods—each group has a semi-transparent fill (`rgba(255, 255, 255, 0.03)`), a subtle border, and 0.25rem vertical padding to visually separate sections without splitting the flow.
+- Flexible surface with `display: flex; gap: 0.5rem`, padding `1rem 1.25rem`, 20px border-radius
+- Background: `var(--panel-bg)` with `var(--border)` frame and `var(--shadow-md)` elevation
+- Group buttons in `toolbar-group` pods with semi-transparent fill `rgba(255, 255, 255, 0.03)`, subtle border, and 0.25rem padding
 
 ### Action Bar Typography & States
-- Labels remain uppercase at `0.65rem`, letter-spaced (.12em), and use `var(--text-disabled)` so they read as system captions. The buttons/selects inside the toolbar inherit `Inter` or `JetBrains Mono` (where monospace is needed) and sit at 36px square for consistent touch targets.
-- Hovering a `toolbar-btn` shifts it up (`translateY(-2px)`), recolors its background to `var(--accent-purple)`, and turns the icon/text to `var(--text)`. Active/pressed states scale slightly down (0.95) while keeping the purple glow (`--shadow-purple`). Disabled states fade to 0.3 opacity and stop animating.
-- Select controls and color swatches mimic the same hover idea: lighten the background, tint the border to `var(--accent-purple)`, and add the purple shadow, while tooltips appear below the hitting target.
+- Labels are uppercase at `0.65rem`, letter-spaced (.12em), using `var(--text-disabled)` for system captions
+- Buttons/selects use `Inter` or `JetBrains Mono` (monospace) at 36px square for consistent touch targets
+- Hover: shift up 2px, purple background, standard text color
+- Active: scale to 0.95 with purple glow
+- Disabled: fade to 0.3 opacity
+- Select controls and color swatches follow same hover pattern with purple accent and shadow
 
 ### Tooltip Language
-- All toolbar tooltips (`toolbar-btn`, `toolbar-select`, `toolbar-color`, `align-btn`, etc.) share the same blueprint: 0.75rem text at weight 500, 0.5rem vertical padding, rounded 10px borders, and the `var(--panel-bg-elevated)` fill with `var(--border-light)` rims. They fade in with a 0.2s transition, slide up from 4px under the trigger, and sit above everything else (`z-index: 1000`).
-- When showing success messages (like a copied state), switch the background/border to `var(--accent-yellow)` and text to `var(--bg)` so feedback reads instantly.
+- Unified style: 0.75rem text at weight 500, 0.5rem padding, 10px border-radius
+- Background: `var(--panel-bg-elevated)` with `var(--border-light)` borders
+- Fade in with 0.2s transition, slide up 4px from trigger, z-index: 1000
+- Success states: switch to `var(--accent-yellow)` background with `var(--bg)` text
 
 ### Consuming the System
-- Any new tool under this umbrella should reuse the same CSS hooks: apply the radial gradient overlay to the body, keep the gradient-filled title treatment, wrap actions inside the toolbar pattern, and keep hover/tooltip language synchronized. This keeps tools feeling like members of the same premium app family.
-
-## Design Principles
-
-### 1. Dark First
-- All backgrounds use dark colors (#0d0d0d to #252525)
-- High contrast white text on dark surfaces
-- Subtle gradients for depth
-
-### 2. Bold Accents
-- Yellow (#FFD700) for primary CTAs and important actions
-- Purple (#6739B7) for interactive states and hover effects
-- Gradients between yellow and purple for premium feel
-
-### 3. Rounded Corners
-- Small elements: 8-12px border-radius
-- Cards/Panels: 20-24px border-radius
-- Buttons: 10-12px border-radius
-
-### 4. Micro-interactions
-- Hover states with `translateY(-2px)` for lift effect
-- Active states with `scale(0.95-0.98)`
-- Smooth transitions (0.2s ease)
-- Glowing shadows on interactive elements
-
-### 5. Subtle Animations
-- Animated gradient background
-- Smooth color transitions
-- Transform-based hover effects
-
-## Component Patterns
-
-### Buttons
-- **Primary**: Yellow gradient background with dark text
-- **Secondary**: Transparent with purple hover state
-- All buttons lift on hover and compress on active
-
-### Cards/Panels
-- Dark background (#1e1e1e)
-- Subtle top border highlight
-- Large border radius (24px)
-- Drop shadows for elevation
-
-### Form Inputs
-- Dark background with subtle transparency
-- Purple border on focus
-- Purple glow shadow on focus
-- Rounded corners (12px)
-
-### Code Blocks
-- Very dark background (rgba(0,0,0,0.4-0.5))
-- Purple borders
-- Yellow language labels
-- Syntax highlighting with brand colors
-
-### Tables
-- Purple gradient headers
-- Yellow bottom border on headers
-- Purple hover effect on rows
-- Rounded corners with overflow hidden
+- Reuse CSS hooks: apply radial gradient overlay to body, use gradient-filled title, wrap actions in toolbar pattern, and maintain consistent hover/tooltip language across all tools
 
 ## Usage Guidelines
 
