@@ -1,4 +1,4 @@
-# Cred App Design System
+# Premium Dark Design System
 
 ## Color Palette
 
