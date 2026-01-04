@@ -86,7 +86,7 @@ You can use <span style="color: #2de3ff;">custom colors</span> and other HTML wh
 Clear this content and start writing your own markdown! Use the toolbar above for quick formatting.
 `;
 
-editor.value = initialMarkdown;
+editor.value = '';
 
 const saveToHistory = () => {
   if (isUndoRedoAction) {
@@ -275,6 +275,12 @@ const actions = {
     a.download = 'markdown.md';
     a.click();
     URL.revokeObjectURL(url);
+  },
+  loadSample: () => {
+    editor.value = initialMarkdown;
+    saveToHistory();
+    updateLineNumbers();
+    render();
   },
   heading: () => insertAtLine('## '),
   fontcolor: (color) => {
