@@ -478,14 +478,16 @@ document.addEventListener('mousemove', (e) => {
   const containerRect = container.getBoundingClientRect();
   const leftPanel = container.querySelector('.panel:first-child');
   const rightPanel = container.querySelector('.right-panel');
+  const resizerWidth = resizer.getBoundingClientRect().width;
+  const halfResizer = resizerWidth / 2;
   
   const offsetX = e.clientX - containerRect.left;
   const totalWidth = containerRect.width;
   const leftWidth = (offsetX / totalWidth) * 100;
   
   if (leftWidth > 20 && leftWidth < 80) {
-    leftPanel.style.flex = `0 0 ${leftWidth}%`;
-    rightPanel.style.flex = `0 0 ${100 - leftWidth}%`;
+    leftPanel.style.flex = `0 0 calc(${leftWidth}% - ${halfResizer}px)`;
+    rightPanel.style.flex = `0 0 calc(${100 - leftWidth}% - ${halfResizer}px)`;
   }
 });
 
